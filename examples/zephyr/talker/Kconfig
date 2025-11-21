@@ -1,0 +1,8 @@
+config RMW_ZENOH_PICO_TALKER
+	bool "RMW Zenoh-pico Zephyr talker application"
+	default y
+	help
+	  RMW-based Zephyr talker using rmw_zenoh_pico middleware
+	  and RCL/RCLC APIs to publish std_msgs/String messages.
+
+source "Kconfig.zephyr"

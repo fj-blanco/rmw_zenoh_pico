@@ -1,0 +1,14 @@
+# Zenoh-pico publisher example configuration
+
+mainmenu "Zenoh-pico Publisher Configuration"
+
+config ZENOH_PICO_CLIENT_MODE
+	bool "Use Zenoh client mode (connect to router)"
+	default n
+	help
+	  Enable client mode to connect to a Zenoh router at tcp/127.0.0.1:7447
+	  instead of using peer mode with multicast discovery.
+	  This is useful for native_sim where multicast doesn't work with
+	  offloaded sockets.
+
+source "Kconfig.zephyr"

@@ -1,0 +1,4 @@
+/* Enable Wi-Fi peripheral on ESP32 */
+&wifi {
+	status = "okay";
+};

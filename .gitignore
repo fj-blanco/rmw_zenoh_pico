@@ -128,3 +128,7 @@ CMakeLists.txt.user*
 
 # QtCreator 4.8< compilation database
 compile_commands.json
+
+.venv/
+examples/zephyr/z_pub/build/
+examples/zephyr/talker/build/

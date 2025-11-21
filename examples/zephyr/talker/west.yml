@@ -1,0 +1,26 @@
+manifest:
+  defaults:
+    remote: zephyrproject
+
+  remotes:
+    - name: zephyrproject
+      url-base: https://github.com/zephyrproject-rtos
+    - name: zenoh-pico
+      url-base: https://github.com/eclipse-zenoh
+
+  projects:
+    - name: zephyr
+      remote: zephyrproject
+      repo-path: zephyr
+      revision: v4.2.1
+      path: zephyr
+      import: true
+    
+    - name: zenoh-pico
+      remote: zenoh-pico
+      repo-path: zenoh-pico
+      revision: 1.6.2
+      path: modules/lib/zenoh-pico
+
+  self:
+    path: .

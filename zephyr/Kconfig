@@ -1,0 +1,11 @@
+menu "rmw_zenoh_pico module"
+
+config RMW_ZENOH_PICO
+    bool "Enable rmw_zenoh_pico integration"
+    default y
+    help
+      Enable the rmw_zenoh_pico Zephyr module. This provides a thin wrapper
+      API for simple publish/subscribe usage on Zephyr without pulling in
+      full ROS 2 dependencies.
+
+endmenu
