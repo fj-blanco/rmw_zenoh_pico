@@ -1,5 +1,6 @@
 #include <zephyr/logging/log.h>
 #include <zephyr/net/net_mgmt.h>
+#include <zephyr/net/net_ip.h>
 #include <zephyr/net/wifi_mgmt.h>
 #include <zephyr/net/net_if.h>
 #include <zephyr/kernel.h>
@@ -9,11 +10,12 @@ LOG_MODULE_REGISTER(wifi, LOG_LEVEL_INF);
 
 static struct {
     struct k_sem connected;
+    struct k_sem ipv4_ready;
     struct k_sem disconnected;
     int status;
 } wifi_ctx;
 
-static void wifi_mgmt_event_handler(struct net_mgmt_event_callback *cb, uint64_t mgmt_event,
+static void wifi_mgmt_event_handler(struct net_mgmt_event_callback *cb, uint32_t mgmt_event,
                                     struct net_if *iface) {
     ARG_UNUSED(iface);
 
@@ -32,16 +34,34 @@ static void wifi_mgmt_event_handler(struct net_mgmt_event_callback *cb, uint64_t
     }
 }
 
+static void ipv4_event_handler(struct net_mgmt_event_callback *cb, uint32_t mgmt_event,
+                               struct net_if *iface) {
+    ARG_UNUSED(cb);
+
+    if (mgmt_event == NET_EVENT_IPV4_ADDR_ADD) {
+        char address[NET_IPV4_ADDR_LEN];
+        struct in_addr *ipv4 = net_if_ipv4_get_global_addr(iface, NET_ADDR_PREFERRED);
+        if (ipv4 != NULL) {
+            LOG_INF("IPv4 address: %s", net_addr_ntop(AF_INET, ipv4, address, sizeof(address)));
+            k_sem_give(&wifi_ctx.ipv4_ready);
+        }
+    }
+}
+
 int wifi_init(void *unused) {
     ARG_UNUSED(unused);
     k_sem_init(&wifi_ctx.connected, 0, 1);
+    k_sem_init(&wifi_ctx.ipv4_ready, 0, 1);
     k_sem_init(&wifi_ctx.disconnected, 0, 1);
     wifi_ctx.status = -1;
 
     static struct net_mgmt_event_callback wifi_cb;
+    static struct net_mgmt_event_callback ipv4_cb;
     net_mgmt_init_event_callback(&wifi_cb, wifi_mgmt_event_handler,
                                  NET_EVENT_WIFI_CONNECT_RESULT | NET_EVENT_WIFI_DISCONNECT_RESULT);
+    net_mgmt_init_event_callback(&ipv4_cb, ipv4_event_handler, NET_EVENT_IPV4_ADDR_ADD);
     net_mgmt_add_event_callback(&wifi_cb);
+    net_mgmt_add_event_callback(&ipv4_cb);
     return 0;
 }
 
@@ -75,6 +95,9 @@ int connect_to_wifi(void) {
 
 int wait_for_wifi_connection(void) {
     if (k_sem_take(&wifi_ctx.connected, K_SECONDS(20)) != 0) {
+        return -ETIMEDOUT;
+    }
+    if (k_sem_take(&wifi_ctx.ipv4_ready, K_SECONDS(20)) != 0) {
         return -ETIMEDOUT;
     }
     return wifi_ctx.status;

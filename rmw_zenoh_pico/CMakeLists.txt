@@ -103,45 +103,10 @@ endif()
 
 set(DOC_INSTALL_DIR ${DOC_DIR} CACHE PATH "Installation directory for documentation")
 
-set(SRCS
-  src/zenoh_pico/zenoh_pico_attach.c
-  src/zenoh_pico/zenoh_pico_condition.c
-  src/zenoh_pico/zenoh_pico_data.c
-  src/zenoh_pico/zenoh_pico_entity.c
-  src/zenoh_pico/zenoh_pico_gid.c
-  src/zenoh_pico/zenoh_pico_liveliness.c
-  src/zenoh_pico/zenoh_pico_messageType.c
-  src/zenoh_pico/zenoh_pico_nodeInfo.c
-  src/zenoh_pico/zenoh_pico_rosMessage.c
-  src/zenoh_pico/zenoh_pico_session.c
-  src/zenoh_pico/zenoh_pico_string.c
-  src/zenoh_pico/zenoh_pico_topicInfo.c
-
-  src/utilities/test_qos_profile.c
-
-  src/rmw_client.c
-  src/rmw_count.c
-  src/rmw_dynamic_message.c
-  src/rmw_event.c
-  src/rmw_features.c
-  src/rmw_gid.c
-  src/rmw_guard_condition.c
-  src/rmw_identifier.c
-  src/rmw_init.c
-  src/rmw_logging.c
-  src/rmw_names.c
-  src/rmw_node.c
-  src/rmw_publisher.c
-  src/rmw_qos.c
-  src/rmw_serialize.c
-  src/rmw_service.c
-  src/rmw_subscription.c
-  src/rmw_take.c
-  src/rmw_wait.c
-)
+include(cmake/rmw_zenoh_pico_sources.cmake)
 
 add_library(${PROJECT_NAME}
-  ${SRCS})
+  ${RMW_ZENOH_PICO_SOURCES})
 
 target_link_libraries(${PROJECT_NAME}
   microcdr

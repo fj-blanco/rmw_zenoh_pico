@@ -9,5 +9,5 @@ zephyr_library_named(zephyr_common)
 # Add source files
 zephyr_library_sources(src/wifi.c)
 
-# Add include directories
-zephyr_library_include_directories(include)
+# Expose the Wi-Fi API to applications linking this library.
+target_include_directories(zephyr_common PUBLIC include)

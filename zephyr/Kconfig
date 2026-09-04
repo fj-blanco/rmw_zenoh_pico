@@ -1,11 +1,26 @@
-menu "rmw_zenoh_pico module"
+menuconfig RMW_ZENOH_PICO
+	bool "rmw_zenoh_pico middleware"
+	depends on MICROROS
+	depends on ZENOH_PICO
+	help
+	  Build rmw_zenoh_pico as a Zephyr library. Applications must enable
+	  micro-ROS, zenoh-pico, networking, and the POSIX APIs required by
+	  zenoh-pico.
 
-config RMW_ZENOH_PICO
-    bool "Enable rmw_zenoh_pico integration"
-    default y
-    help
-      Enable the rmw_zenoh_pico Zephyr module. This provides a thin wrapper
-      API for simple publish/subscribe usage on Zephyr without pulling in
-      full ROS 2 dependencies.
+if RMW_ZENOH_PICO
 
-endmenu
+config RMW_ZENOH_PICO_MAX_LIVELINESS_LENGTH
+	int "Maximum liveliness key expression length"
+	default 256
+	range 64 1024
+	help
+	  Maximum size in bytes of a ROS 2 liveliness key expression.
+
+endif # RMW_ZENOH_PICO
+
+config RMW_ZENOH_PICO_SIMPLE_PUB
+	bool "rmw_zenoh_pico simple Zenoh publisher helper"
+	depends on ZENOH_PICO
+	help
+	  Build the lightweight publisher helper used by the z_pub sample. This
+	  helper uses zenoh-pico directly and does not require micro-ROS.

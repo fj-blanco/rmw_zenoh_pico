@@ -135,8 +135,44 @@ Case multicast:
 
 ## Installing and build for rmw_zenoh_pico with the micro-ROS system
 
-The rmw_zenoh_pico is used instead of the XRCE-DDS layer in the micro-ROS product.  
+The rmw_zenoh_pico is used instead of the XRCE-DDS layer in the micro-ROS product.
 The rmw_zenoh_pico has to install the micro-ROS product before building it.
+
+### Zephyr module
+
+`rmw_zenoh_pico` can be built as a Zephyr module alongside
+`micro_ros_zephyr_module` and zenoh-pico. Add the repository root and the
+micro-ROS `libmicroros` module to `ZEPHYR_EXTRA_MODULES` before loading Zephyr:
+
+```cmake
+list(APPEND ZEPHYR_EXTRA_MODULES
+  /path/to/micro_ros_zephyr_module/modules/libmicroros
+  /path/to/rmw_zenoh_pico)
+find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
+```
+
+Enable the three libraries in the application configuration:
+
+```text
+CONFIG_MICROROS=y
+CONFIG_ZENOH_PICO=y
+CONFIG_RMW_ZENOH_PICO=y
+```
+
+The module compiles the RMW implementation as a Zephyr library and links it
+before the default middleware embedded in `libmicroros.a`. Configure the
+Zenoh client endpoint before `rclc_support_init()`:
+
+```c
+const char * router_ip = "<router-ip>";
+
+rmw_zenoh_pico_set_mode("client");
+rmw_zenoh_pico_set_unicast(router_ip, "7447", NULL, NULL);
+```
+
+The application must also enable the Zephyr networking and POSIX options
+required by zenoh-pico. See [`examples/zephyr`](examples/zephyr) for Zephyr
+application examples.
 
 > [!NOTE]
 > The rmw_zenoh_pico needs part of any library to get the hash value in the fastdds library.  

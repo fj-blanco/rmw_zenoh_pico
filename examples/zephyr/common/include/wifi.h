@@ -1,4 +1,4 @@
-/* Minimal Wi-Fi API for Zenoh publisher example */
+/* Minimal Wi-Fi station API for the Zephyr examples. */
 
 #pragma once
 

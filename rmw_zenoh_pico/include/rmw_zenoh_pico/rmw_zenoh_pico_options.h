@@ -17,6 +17,8 @@
 #ifndef RMW_ZENOH_PICO_OPTIONS_H
 #define RMW_ZENOH_PICO_OPTIONS_H
 
+#include <rmw_zenoh_pico/config.h>
+
 #define _Z_LOG_LVL_NONE  0
 #define _Z_LOG_LVL_ERROR 1
 #define _Z_LOG_LVL_INFO  2

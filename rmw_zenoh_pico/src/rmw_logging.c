@@ -14,12 +14,14 @@
 // limitations under the License.
 
 #include "zenoh-pico/api/macros.h"
+#include <inttypes.h>
 #include <rmw_zenoh_pico/rmw_zenoh_pico.h>
 
 static z_owned_mutex_t mutex_logging;
 
 // Timestamp function
-#if defined(ZENOH_LINUX) || defined (ZENOH_ARDUINO_ESP32) || defined (ZENOH_ESPIDF)
+#if defined(ZENOH_LINUX) || defined(ZENOH_ARDUINO_ESP32) || \
+  defined(ZENOH_ESPIDF) || defined(ZENOH_ZEPHYR)
 
 void z_log_prefix(const char *prefix, const char *func_name, const char *fmt, ...) {
   static char tstamp[64];
@@ -28,11 +30,12 @@ void z_log_prefix(const char *prefix, const char *func_name, const char *fmt, ..
   struct timespec abstime;
   clock_gettime(CLOCK_REALTIME, &abstime);
 
-  snprintf(tstamp, sizeof(tstamp) -1, "%ld.%09ld", abstime.tv_sec, abstime.tv_nsec);
+  snprintf(tstamp, sizeof(tstamp) - 1, "%" PRIdMAX ".%09" PRIdMAX,
+    (intmax_t)abstime.tv_sec, (intmax_t)abstime.tv_nsec);
 
   va_list args;
   va_start(args , fmt);
-  int ret = vsnprintf(msg, sizeof(msg) -1, fmt, args);
+  (void)vsnprintf(msg, sizeof(msg) - 1, fmt, args);
   va_end(args);
 
   printf("[%-5s] [%s] [%s] : %s\n",  prefix, tstamp, func_name, msg);
@@ -44,6 +47,9 @@ void z_log_prefix(const char *prefix, const char *func_name, const char *fmt, ..
 static int rmw_zenoh_pico_debug_level = _Z_LOG_LVL_ERROR;
 void rmw_zenoh_pico_debug_level_init(void)
 {
+#if defined(ZENOH_ZEPHYR)
+  return;
+#else
   char *pathvar;
 
   if((pathvar = getenv("RMW_ZNEOH_PICO_LOG")) == NULL)
@@ -62,6 +68,7 @@ void rmw_zenoh_pico_debug_level_init(void)
   }
 
   return;
+#endif
 }
 
 bool rmw_zenoh_pico_check_validate_name(const char * name)

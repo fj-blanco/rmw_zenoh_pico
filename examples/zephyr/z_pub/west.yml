@@ -12,14 +12,19 @@ manifest:
     - name: zephyr
       remote: zephyrproject
       repo-path: zephyr
-      revision: v4.2.1
+      revision: v4.1.0
       path: zephyr
-      import: true
+      import:
+        name-allowlist:
+          - cmsis
+          - hal_espressif
+          - mbedtls
+          - picolibc
     
     - name: zenoh-pico
       remote: zenoh-pico
       repo-path: zenoh-pico
-      revision: 1.6.2
+      revision: 1.4.0
       path: modules/lib/zenoh-pico
 
   self:

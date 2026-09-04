@@ -1,6 +1,7 @@
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
 #include <errno.h>
+#include <stdio.h>
 #include <string.h>
 
 #include <rmw_zenoh_pico/zephyr_simple_pub.h>
@@ -86,14 +87,14 @@ void main(void)
 #ifdef CONFIG_ZENOH_PICO_CLIENT_MODE
     client_mode = true;
 #endif
-    const char *endpoint =
+    const char *connect_endpoint = NULL;
 #ifdef CONFIG_ZENOH_PICO_CLIENT_MODE
-        "tcp/192.168.1.132:7447";
-#else
-        NULL;
+    char endpoint[64];
+    (void)snprintf(endpoint, sizeof(endpoint), "tcp/%s:7447", ZENOH_ROUTER_IP);
+    connect_endpoint = endpoint;
 #endif
 
-    int rc = rzp_zephyr_run_publisher(KEYEXPR, VALUE, client_mode, endpoint);
+    int rc = rzp_zephyr_run_publisher(KEYEXPR, VALUE, client_mode, connect_endpoint);
     if (rc < 0) {
         LOG_ERR("rmw_zenoh_pico publisher failed: %d", rc);
         return;

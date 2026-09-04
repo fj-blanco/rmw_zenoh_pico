@@ -61,6 +61,8 @@
 // debug print
 #ifdef LINUX_POSIX
 #define DEBUG_PRINT(fmt, ...) printf(fmt, ##__VA_ARGS__)
+#elif defined(ZENOH_ZEPHYR)
+#define DEBUG_PRINT(fmt, ...) printf(fmt, ##__VA_ARGS__)
 #else
 extern int target_print(const char *fmt, ...);
 #define DEBUG_PRINT(fmt, ...) target_print(fmt, ##__VA_ARGS__)

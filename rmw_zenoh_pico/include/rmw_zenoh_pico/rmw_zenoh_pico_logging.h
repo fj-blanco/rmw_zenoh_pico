@@ -65,11 +65,11 @@ extern void rmw_zenoh_pico_log_unlock(void);
 #define _Z_INFO(...) (void)(0)
 #define _Z_ERROR(...) (void)(0)
 
-#define RMW_ZENOH_LOG_DEBUG (void)(0)
-#define RMW_ZENOH_LOG_INFO (void)(0)
-#define RMW_ZENOH_LOG_ERROR (void)(0)
+#define RMW_ZENOH_LOG_DEBUG(...) (void)(0)
+#define RMW_ZENOH_LOG_INFO(...) (void)(0)
+#define RMW_ZENOH_LOG_ERROR(...) (void)(0)
 
-#define RMW_ZENOH_FUNC_ENTRY() (void)(0)
+#define RMW_ZENOH_FUNC_ENTRY(...) (void)(0)
 
 #else
 

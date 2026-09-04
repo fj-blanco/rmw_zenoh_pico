@@ -1,6 +1,0 @@
-name: rmw_zenoh_pico
-build:
-  cmake: zephyr
-  kconfig: zephyr/Kconfig
-samples:
-  - examples/zephyr/z_pub

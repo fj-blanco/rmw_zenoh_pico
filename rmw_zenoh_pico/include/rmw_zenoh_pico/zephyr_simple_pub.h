@@ -15,7 +15,7 @@ extern "C" {
  *  - keyexpr: Zenoh key expression to publish on (e.g., "demo/example/zenoh-pico-pub")
  *  - initial_value: Optional initial payload prefix (can be NULL)
  *  - client_mode: If true, connect to router specified in connect_endpoint; otherwise peer mode
- *  - connect_endpoint: e.g., "tcp/192.168.1.132:7447" (ignored for peer mode)
+ *  - connect_endpoint: e.g., "tcp/<router-ip>:7447" (ignored for peer mode)
  * Behavior:
  *  - Initializes zenoh-pico, opens a session, declares a publisher
  *  - Publishes a message every second with an incrementing counter
