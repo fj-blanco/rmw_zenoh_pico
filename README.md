@@ -58,7 +58,7 @@ Table: Related repositories
 | Repository      | Branch | SID                                        | URL                                               |
 |-----------------|--------|--------------------------------------------|---------------------------------------------------|
 | micro_ros_setup | jazzy  | `d60bb3ae889d3617a7a408ae78765e472eda7af9` | <https://github.com/micro-ROS/micro_ros_setup>    |
-| zenoh-pico      | 1.4.0  | `d08c096944807a00853892ea45696152308350a2` | <https://github.com/eclipse-zenoh/zenoh-pico.git> |
+| zenoh-pico      | 1.10.1 | `e1ab223a28aaebb5dec1e70d98eab152332f777a` | <https://github.com/eclipse-zenoh/zenoh-pico.git> |
 | rmw_zenoh       | jazzy  | `aae224e449f8f364f4a8025fe85899ce06f5381b` | <https://github.com/ros2/rmw_zenoh.git>           |
 
 ### Configuration
@@ -135,8 +135,44 @@ Case multicast:
 
 ## Installing and build for rmw_zenoh_pico with the micro-ROS system
 
-The rmw_zenoh_pico is used instead of the XRCE-DDS layer in the micro-ROS product.  
+The rmw_zenoh_pico is used instead of the XRCE-DDS layer in the micro-ROS product.
 The rmw_zenoh_pico has to install the micro-ROS product before building it.
+
+### Zephyr module
+
+`rmw_zenoh_pico` can be built as a Zephyr module alongside
+`micro_ros_zephyr_module` and zenoh-pico. Add the repository root and the
+micro-ROS `libmicroros` module to `ZEPHYR_EXTRA_MODULES` before loading Zephyr:
+
+```cmake
+list(APPEND ZEPHYR_EXTRA_MODULES
+  /path/to/micro_ros_zephyr_module/modules/libmicroros
+  /path/to/rmw_zenoh_pico)
+find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
+```
+
+Enable the three libraries in the application configuration:
+
+```text
+CONFIG_MICROROS=y
+CONFIG_ZENOH_PICO=y
+CONFIG_RMW_ZENOH_PICO=y
+```
+
+The module compiles the RMW implementation as a Zephyr library and links it
+before the default middleware embedded in `libmicroros.a`. Configure the
+Zenoh client endpoint before `rclc_support_init()`:
+
+```c
+const char * router_ip = "<router-ip>";
+
+rmw_zenoh_pico_set_mode("client");
+rmw_zenoh_pico_set_unicast(router_ip, "7447", NULL, NULL);
+```
+
+The application must also enable the Zephyr networking and POSIX options
+required by zenoh-pico. A standalone ESP32 integration test is available in
+[`zephyr_apps`](https://github.com/fj-blanco/zephyr_apps/tree/feat/esp32-microros-zenoh/apps/esp32_zenoh_talker).
 
 > [!NOTE]
 > The rmw_zenoh_pico needs part of any library to get the hash value in the fastdds library.  

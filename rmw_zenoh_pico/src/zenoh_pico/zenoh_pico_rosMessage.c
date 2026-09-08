@@ -68,9 +68,9 @@ bool rmw_zenoh_pico_deserialize(void * payload_start,
   RMW_ZENOH_FUNC_ENTRY(NULL);
   ucdrBuffer temp_buffer;
 
-  if(payload_start != NULL){
+  if(payload_start != NULL && payload_size >= ROS2_MSG_OFFSET){
     ucdr_init_buffer(&temp_buffer,
-		     payload_start + ROS2_MSG_OFFSET,
+		     (uint8_t *)payload_start + ROS2_MSG_OFFSET,
 		     payload_size  - ROS2_MSG_OFFSET);
 
     return callbacks->cdr_deserialize(&temp_buffer, ros_message);
@@ -167,7 +167,8 @@ rmw_zenoh_pico_generate_recv_query_msg_data(const z_loaned_query_t *query,
   // is redefined as a member of the query information.
 
   z_keyexpr_clone(&recv_data->keyexpr, z_query_keyexpr(query));
-  _val->_key = _z_keyexpr_alias(z_loan(recv_data->keyexpr));
+  _val->_key = _z_declared_keyexpr_alias_from_string(
+    &z_loan(recv_data->keyexpr)->_inner._keyexpr);
 
   // set receive timestamp
   recv_data->recv_timestamp = recv_ts;

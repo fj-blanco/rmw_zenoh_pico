@@ -32,7 +32,7 @@ static const char QOS_COMPONENT_DELIMITER = ',';
 
 static const char *conv_entity_type(ZenohPicoEntityType type)
 {
-  const char *ret;
+  const char *ret = NULL;
 
   if(type == Node)
     ret = NODE_STR;
@@ -275,7 +275,10 @@ static z_result_t _convert_message_type(const char *message_namespace,
 {
   char _type_name[TYPE_NAME_LEN];
 
-  if(message_name != NULL)
+  if(message_name == NULL)
+    return _Z_ERR_INVALID;
+
+  if(message_namespace != NULL)
     snprintf(_type_name, sizeof(_type_name), "%s::dds_::%s_",
 	     message_namespace,
 	     message_name);

@@ -65,11 +65,11 @@ extern void rmw_zenoh_pico_log_unlock(void);
 #define _Z_INFO(...) (void)(0)
 #define _Z_ERROR(...) (void)(0)
 
-#define RMW_ZENOH_LOG_DEBUG (void)(0)
-#define RMW_ZENOH_LOG_INFO (void)(0)
-#define RMW_ZENOH_LOG_ERROR (void)(0)
+#define RMW_ZENOH_LOG_DEBUG(...) (void)(0)
+#define RMW_ZENOH_LOG_INFO(...) (void)(0)
+#define RMW_ZENOH_LOG_ERROR(...) (void)(0)
 
-#define RMW_ZENOH_FUNC_ENTRY() (void)(0)
+#define RMW_ZENOH_FUNC_ENTRY(...) (void)(0)
 
 #else
 
@@ -175,19 +175,17 @@ static inline void __debug_print_log_loaned_string(const z_loaned_string_t * v, 
   _RMW_ZENOH_LOG_PRINT_FORMAT(func, tag, "(%s)", _work);
 }
 
-static inline void __debug_print_log_keyexpr(const _z_keyexpr_t * v, const char *func, const char *tag) {
-  const _z_keyexpr_t *key = v;
-  char _work[64];
-  memset(_work, 0, sizeof(_work));
-  size_t _len = _z_string_len(&key->_suffix) >= sizeof(_work) -1 ? sizeof(_work) -1 : _z_string_len(&key->_suffix);
-  strncpy(_work, _z_string_data(&key->_suffix), _len);
-
-  _RMW_ZENOH_LOG_PRINT_FORMAT(func, tag, "(%s)", _work);
+static inline void __debug_print_log_keyexpr(const z_loaned_keyexpr_t * v, const char *func, const char *tag) {
+  z_view_string_t key;
+  if (z_keyexpr_as_view_string(v, &key) < 0) {
+    _RMW_ZENOH_LOG_PRINT_FORMAT(func, tag, "(%s)", "invalid key expression");
+    return;
+  }
+  __debug_print_log_loaned_string(z_view_string_loan(&key), func, tag);
 }
 
 static inline void __debug_print_log_loaned_sample(const z_loaned_sample_t * v, const char *func, const char *tag) {
-  const _z_keyexpr_t *key = &v->keyexpr;
-  __debug_print_log_keyexpr(key, func, tag);
+  __debug_print_log_keyexpr(z_sample_keyexpr(v), func, tag);
 }
 
 #define RMW_ZENOH_DEBUG_PRINT(v, t)					\
@@ -203,7 +201,7 @@ static inline void __debug_print_log_loaned_sample(const z_loaned_sample_t * v, 
 	   const rmw_guard_condition_t *	: __debug_print_log_guard_condition, \
 	   const rmw_init_options_t *		: __debug_print_log_init_options, \
 	   const z_loaned_string_t *		: __debug_print_log_loaned_string, \
-	   const _z_keyexpr_t *                 : __debug_print_log_keyexpr, \
+	   const z_loaned_keyexpr_t *           : __debug_print_log_keyexpr, \
 	   const z_loaned_sample_t *		: __debug_print_log_loaned_sample, \
 	   default				: __debug_print_log_ptr	\
     )(v, __func__, t)

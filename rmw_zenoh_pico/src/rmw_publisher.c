@@ -34,6 +34,8 @@ static ZenohPicoPubData * zenoh_pico_generate_publisher_data(
 
   RMW_CHECK_ARGUMENT_FOR_NULL(node, NULL);
 
+  ZenohPicoTopicInfo *topic_info = NULL;
+
   ZenohPicoNodeInfo *node_info	= NULL;
   ZenohPicoEntity *entity	= NULL;
   ZenohPicoPubData *pub_data	= NULL;
@@ -73,7 +75,7 @@ static ZenohPicoPubData * zenoh_pico_generate_publisher_data(
 
   // generate topic key
   z_string_empty(&pub_data->topic_key);
-  ZenohPicoTopicInfo *topic_info = entity->topic_info;
+  topic_info = entity->topic_info;
   if(_Z_IS_ERR(ros_topic_name_to_zenoh_key(z_loan(node_info->domain),
 					   z_loan(topic_info->name),
 					   z_loan(topic_info->type),

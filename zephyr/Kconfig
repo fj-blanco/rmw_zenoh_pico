@@ -1,0 +1,27 @@
+# Copyright(C) 2026 fj-blanco
+# SPDX-License-Identifier: Apache-2.0
+
+menuconfig RMW_ZENOH_PICO
+	bool "rmw_zenoh_pico middleware"
+	depends on MICROROS
+	depends on ZENOH_PICO
+	select ZENOH_PICO_MULTI_THREAD
+	select ZENOH_PICO_PUBLICATION
+	select ZENOH_PICO_SUBSCRIPTION
+	select ZENOH_PICO_QUERY
+	select ZENOH_PICO_QUERYABLE
+	help
+	  Build rmw_zenoh_pico as a Zephyr library. Applications must enable
+	  micro-ROS, zenoh-pico, networking, and the POSIX APIs required by
+	  zenoh-pico.
+
+if RMW_ZENOH_PICO
+
+config RMW_ZENOH_PICO_MAX_LIVELINESS_LENGTH
+	int "Maximum liveliness key expression length"
+	default 256
+	range 64 1024
+	help
+	  Maximum size in bytes of a ROS 2 liveliness key expression.
+
+endif # RMW_ZENOH_PICO

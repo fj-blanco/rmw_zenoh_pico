@@ -281,7 +281,7 @@ rmw_send_request(
   RMW_CHECK_ARGUMENT_FOR_NULL(client, RMW_RET_INVALID_ARGUMENT);
   RMW_CHECK_ARGUMENT_FOR_NULL(client->data, RMW_RET_INVALID_ARGUMENT);
   RMW_CHECK_FOR_NULL_WITH_MSG(
-    client->service_name, "client has no service name", RMW_RET_INVALID_ARGUMENT);
+    client->service_name, "client has no service name", return RMW_RET_INVALID_ARGUMENT);
 
   RMW_CHECK_TYPE_IDENTIFIERS_MATCH(
     client->implementation_identifier,
@@ -291,7 +291,7 @@ rmw_send_request(
   RMW_CHECK_FOR_NULL_WITH_MSG(
     client_data,
     "Unable to retrieve client_data from client.",
-    RMW_RET_INVALID_ARGUMENT);
+    return RMW_RET_INVALID_ARGUMENT);
 
   size_t data_length;
   uint8_t * msg_bytes = rmw_zenoh_pico_serialize(client_data->request_callback,
@@ -364,13 +364,13 @@ rmw_take_response(
     return RMW_RET_INCORRECT_RMW_IMPLEMENTATION);
 
   RMW_CHECK_FOR_NULL_WITH_MSG(
-    client->service_name, "client has no service name", RMW_RET_INVALID_ARGUMENT);
+    client->service_name, "client has no service name", return RMW_RET_INVALID_ARGUMENT);
 
   ZenohPicoServiceData * client_data = (ZenohPicoServiceData * )client->data;
   RMW_CHECK_FOR_NULL_WITH_MSG(
     client_data,
     "Unable to retrieve client_data from client.",
-    RMW_RET_INVALID_ARGUMENT);
+    return RMW_RET_INVALID_ARGUMENT);
 
   ReceiveMessageData *msg_data = recv_msg_list_pop(&client_data->response_queue);
   RMW_CHECK_ARGUMENT_FOR_NULL(msg_data, RMW_RET_ERROR);
