@@ -265,7 +265,7 @@ ZenohPicoWaitSetData * zenoh_pico_generate_wait_set_data(rmw_context_t * context
     return NULL);
 
   z_mutex_init(&wait_data->condition_mutex);
-  (void)z_condvar_init_with_attr(&wait_data->condition_variable, NULL);
+  (void)z_condvar_init(&wait_data->condition_variable);
 
   wait_data->triggered = false;
 

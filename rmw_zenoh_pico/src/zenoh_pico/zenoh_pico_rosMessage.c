@@ -68,9 +68,9 @@ bool rmw_zenoh_pico_deserialize(void * payload_start,
   RMW_ZENOH_FUNC_ENTRY(NULL);
   ucdrBuffer temp_buffer;
 
-  if(payload_start != NULL){
+  if(payload_start != NULL && payload_size >= ROS2_MSG_OFFSET){
     ucdr_init_buffer(&temp_buffer,
-		     payload_start + ROS2_MSG_OFFSET,
+		     (uint8_t *)payload_start + ROS2_MSG_OFFSET,
 		     payload_size  - ROS2_MSG_OFFSET);
 
     return callbacks->cdr_deserialize(&temp_buffer, ros_message);

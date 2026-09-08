@@ -495,13 +495,13 @@ rmw_take_request(
     return RMW_RET_INCORRECT_RMW_IMPLEMENTATION);
 
   RMW_CHECK_FOR_NULL_WITH_MSG(
-    service->service_name, "service has no service name", RMW_RET_INVALID_ARGUMENT);
+    service->service_name, "service has no service name", return RMW_RET_INVALID_ARGUMENT);
 
   ZenohPicoServiceData * service_data = (ZenohPicoServiceData * )service->data;
   RMW_CHECK_FOR_NULL_WITH_MSG(
     service_data,
     "Unable to retrieve service_data from service.",
-    RMW_RET_INVALID_ARGUMENT);
+    return RMW_RET_INVALID_ARGUMENT);
 
   ReceiveMessageData *msg_data = recv_msg_list_pop(&service_data->request_queue);
   RMW_CHECK_ARGUMENT_FOR_NULL(msg_data, RMW_RET_ERROR);
@@ -555,13 +555,13 @@ rmw_send_response(
     return RMW_RET_INCORRECT_RMW_IMPLEMENTATION);
 
   RMW_CHECK_FOR_NULL_WITH_MSG(
-    service->service_name, "service has no service name", RMW_RET_INVALID_ARGUMENT);
+    service->service_name, "service has no service name", return RMW_RET_INVALID_ARGUMENT);
 
   ZenohPicoServiceData * service_data = (ZenohPicoServiceData * )service->data;
   RMW_CHECK_FOR_NULL_WITH_MSG(
     service_data,
     "Unable to retrieve service_data from service.",
-    RMW_RET_INVALID_ARGUMENT);
+    return RMW_RET_INVALID_ARGUMENT);
 
   ReceiveMessageData *msg_data = recv_msg_list_pickup(&service_data->response_queue,
 						      _compare_responce_msg,
@@ -570,7 +570,7 @@ rmw_send_response(
   RMW_CHECK_FOR_NULL_WITH_MSG(
     msg_data,
     "Unable to responce que.",
-    RMW_RET_INVALID_ARGUMENT);
+    return RMW_RET_INVALID_ARGUMENT);
 
   if(rmw_zenoh_pico_debug_level_get() == _Z_LOG_LVL_DEBUG){
     rmw_zenoh_pico_debug_recv_msg_data(msg_data);

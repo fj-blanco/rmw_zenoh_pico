@@ -31,6 +31,8 @@ static ZenohPicoSubData * zenoh_pico_generate_subscription_data(
 
   RMW_CHECK_ARGUMENT_FOR_NULL(node, NULL);
 
+  ZenohPicoSubData *sub_data = NULL;
+
   ZenohPicoEntity *entity      = NULL;
   ZenohPicoNodeInfo *node_info = NULL;
 
@@ -48,7 +50,6 @@ static ZenohPicoSubData * zenoh_pico_generate_subscription_data(
   if(entity == NULL)
     goto error;
 
-  ZenohPicoSubData *sub_data = NULL;
   sub_data = ZenohPicoDataGenerate(sub_data);
   RMW_CHECK_FOR_NULL_WITH_MSG(
     sub_data,

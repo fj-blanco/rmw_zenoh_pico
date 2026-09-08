@@ -31,6 +31,8 @@ ZenohPicoNodeData * zenoh_pico_generate_node_data(size_t domain_id,
 
   RMW_CHECK_ARGUMENT_FOR_NULL(session, NULL);
 
+  ZenohPicoNodeData *node_data = NULL;
+
   ZenohPicoNodeInfo *node_info	= NULL;
   ZenohPicoEntity *entity	= NULL;
 
@@ -52,7 +54,6 @@ ZenohPicoNodeData * zenoh_pico_generate_node_data(size_t domain_id,
   if(entity == NULL)
     goto error;
 
-  ZenohPicoNodeData *node_data = NULL;
   node_data = ZenohPicoDataGenerate(node_data);
   RMW_CHECK_FOR_NULL_WITH_MSG(
     node_data,
