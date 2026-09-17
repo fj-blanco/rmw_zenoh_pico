@@ -145,6 +145,7 @@ add_library(${PROJECT_NAME}
 
 target_link_libraries(${PROJECT_NAME}
   microcdr
+  zenohpico::lib
 )
 
 # Type support lock-up mechanism

@@ -167,7 +167,8 @@ rmw_zenoh_pico_generate_recv_query_msg_data(const z_loaned_query_t *query,
   // is redefined as a member of the query information.
 
   z_keyexpr_clone(&recv_data->keyexpr, z_query_keyexpr(query));
-  _val->_key = _z_keyexpr_alias(z_loan(recv_data->keyexpr));
+  _val->_key = _z_declared_keyexpr_alias_from_string(
+    &z_loan(recv_data->keyexpr)->_inner._keyexpr);
 
   // set receive timestamp
   recv_data->recv_timestamp = recv_ts;
