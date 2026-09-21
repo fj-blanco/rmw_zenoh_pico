@@ -31,8 +31,6 @@ extern "C"
     ZenohPicoWaitSetData **wait_set_data_ptr;
   } ZenohPicoWaitCondition;
 
-  extern z_result_t z_condvar_init_with_attr(z_owned_condvar_t *cv,
-					     pthread_condattr_t *attr);
   extern z_result_t z_condvar_timewait(z_loaned_condvar_t *cv,
 				       z_loaned_mutex_t *mp,
 				       struct timespec *wait_timeout);
