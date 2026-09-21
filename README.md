@@ -58,7 +58,7 @@ Table: Related repositories
 | Repository      | Branch | SID                                        | URL                                               |
 |-----------------|--------|--------------------------------------------|---------------------------------------------------|
 | micro_ros_setup | jazzy  | `d60bb3ae889d3617a7a408ae78765e472eda7af9` | <https://github.com/micro-ROS/micro_ros_setup>    |
-| zenoh-pico      | 1.4.0  | `d08c096944807a00853892ea45696152308350a2` | <https://github.com/eclipse-zenoh/zenoh-pico.git> |
+| zenoh-pico      | 1.8.0  | `eb47e2e0c4a6c071221c95dd0c196651f8beed51` | <https://github.com/eclipse-zenoh/zenoh-pico.git> |
 | rmw_zenoh       | jazzy  | `aae224e449f8f364f4a8025fe85899ce06f5381b` | <https://github.com/ros2/rmw_zenoh.git>           |
 
 ### Configuration
