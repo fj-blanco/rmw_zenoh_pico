@@ -151,23 +151,17 @@ rmw_zenoh_pico_generate_recv_query_msg_data(const z_loaned_query_t *query,
   recv_data->payload_size = payload_size;
   _z_bytes_to_buf(payload, recv_data->payload_start, z_bytes_len(payload));
 
-  // clone query with ref counter.
-  recv_data->query = _z_query_rc_clone(query);
-  _z_query_t *_val = recv_data->query._val;
+  if(_Z_IS_ERR(z_query_clone(&recv_data->query, query))){
+    RMW_ZENOH_LOG_ERROR("unable to retain query data");
 
-  // WORKAROUND:
-  // when the query message by z_query_reply() on other places of callback
-  // function on the original zenoh-pico implementation, their function dont send
-  // message for remote zenoh.
-  //
-  // This problem occurs because the original structure(qle_infos.ke_out)
-  // of the aliased keyexpr member in query is cleared by the _z_keyexpr_clear() function.
-  //
-  // Therefore, the keyexpr is alias information which is clone from original query data
-  // is redefined as a member of the query information.
+    TOPIC_FREE(recv_data->payload_start);
+    recv_data->payload_start = NULL;
+    if(ZenohPicoDataRelease(recv_data)){
+      ZenohPicoDataDestroy(recv_data);
+    }
 
-  z_keyexpr_clone(&recv_data->keyexpr, z_query_keyexpr(query));
-  _val->_key = _z_keyexpr_alias(z_loan(recv_data->keyexpr));
+    return NULL;
+  }
 
   // set receive timestamp
   recv_data->recv_timestamp = recv_ts;
@@ -179,8 +173,7 @@ rmw_zenoh_pico_generate_recv_query_msg_data(const z_loaned_query_t *query,
     RMW_ZENOH_LOG_ERROR("unable to receive attachment data");
 
     TOPIC_FREE(recv_data->payload_start);
-    z_drop(z_move(recv_data->keyexpr));
-    _z_query_rc_drop(&recv_data->query);
+    z_drop(z_move(recv_data->query));
 
     return NULL;
   }
@@ -206,8 +199,7 @@ bool zenoh_pico_delete_recv_msg_data(ReceiveMessageData * recv_data)
     attachment_destroy(&recv_data->attachment);
 
     if(recv_data->type == Query){
-      z_drop(z_move(recv_data->keyexpr));
-      _z_query_rc_drop(&recv_data->query);
+      z_drop(z_move(recv_data->query));
     }
 
     ZenohPicoDataDestroy(recv_data);
@@ -266,10 +258,8 @@ void rmw_zenoh_pico_debug_recv_msg_data(ReceiveMessageData * recv_data)
   DEBUG_PRINT("ref              = %d\n", recv_data->ref);
 #if defined(__x86_64__)
   DEBUG_PRINT("recv_timestamp   = [%lu]\n", recv_data->recv_timestamp);
-  DEBUG_PRINT("query ref        = [%ld]\n", _z_simple_rc_strong_count(recv_data->query._cnt));
 #else
   DEBUG_PRINT("recv_timestamp   = [%llu]\n", recv_data->recv_timestamp);
-  DEBUG_PRINT("query ref        = [%d]\n", _z_simple_rc_strong_count(recv_data->query._cnt));
 #endif
   // debug attachment
   attachment_debug(&recv_data->attachment);

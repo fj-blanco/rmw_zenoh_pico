@@ -57,9 +57,8 @@ extern "C"
     // type of my message
     ZenohPicoMessageType type;
 
-    // used by rmw_take_request() and rmw_take_request()
-    _z_query_rc_t      query;
-    z_owned_keyexpr_t  keyexpr;
+    // retained between rmw_take_request() and rmw_send_response()
+    z_owned_query_t query;
 
   } ReceiveMessageData;
 

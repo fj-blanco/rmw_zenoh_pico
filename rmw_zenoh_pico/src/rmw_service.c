@@ -605,8 +605,9 @@ rmw_send_response(
   z_bytes_copy_from_buf(&reply_payload, msg_bytes, data_length);
 
   // send response
-  z_result_t ret = z_query_reply(&msg_data->query,
-				 z_query_keyexpr(&msg_data->query),
+  const z_loaned_query_t * query = z_loan(msg_data->query);
+  z_result_t ret = z_query_reply(query,
+				 z_query_keyexpr(query),
 				 z_move(reply_payload),
 				 &options);
 
