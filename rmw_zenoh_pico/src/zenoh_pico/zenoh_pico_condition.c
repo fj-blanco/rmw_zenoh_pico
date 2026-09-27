@@ -19,10 +19,7 @@
 #if defined(ZENOH_LINUX) || defined (ZENOH_ARDUINO_ESP32) || defined (ZENOH_ESPIDF)
 
 z_result_t z_condvar_timewait(z_loaned_condvar_t *cv, z_loaned_mutex_t *mp, struct timespec *wait_timeout){
-  struct timespec abstime;
-
-  memset(&abstime, 0, sizeof(abstime));
-  clock_gettime(CLOCK_REALTIME, &abstime);
+  z_clock_t abstime = z_clock_now();
 
   uint64_t _nsec_time = abstime.tv_nsec + wait_timeout->tv_nsec;
   abstime.tv_sec += wait_timeout->tv_sec + (_nsec_time/1000000000);
@@ -34,7 +31,7 @@ z_result_t z_condvar_timewait(z_loaned_condvar_t *cv, z_loaned_mutex_t *mp, stru
   // 		      abstime.tv_sec,
   // 		      abstime.tv_nsec);
 
-  z_result_t ret = _z_condvar_wait_until(cv, mp, &abstime);
+  z_result_t ret = z_condvar_wait_until(cv, mp, &abstime);
 
   return ret;
 }
